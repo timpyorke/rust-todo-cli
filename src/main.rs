@@ -5,10 +5,14 @@ use dirs::home_dir;
 use std::fs;
 use std::path::PathBuf;
 
-use todo::constants::*;
 use std::cmp::Ordering;
+use todo::constants::*;
 
-use todo::models::{cli::Cli, commands::{Commands, SortBy}, task::Task};
+use todo::models::{
+    cli::Cli,
+    commands::{Commands, SortBy},
+    task::Task,
+};
 use todo::storage::{load_tasks, matches_search, next_id, print_tasks, save_tasks};
 
 fn db_file_path() -> Result<PathBuf> {
@@ -108,7 +112,7 @@ fn main() -> Result<()> {
                 SortBy::Id => owned.sort_by_key(|t| t.id),
                 SortBy::Date => owned.sort_by(|a, b| match (a.due, b.due) {
                     (Some(ad), Some(bd)) => ad.cmp(&bd).then(a.id.cmp(&b.id)),
-                    (Some(_), None) => Ordering::Less,   // dated tasks first
+                    (Some(_), None) => Ordering::Less, // dated tasks first
                     (None, Some(_)) => Ordering::Greater,
                     (None, None) => a.id.cmp(&b.id),
                 }),
