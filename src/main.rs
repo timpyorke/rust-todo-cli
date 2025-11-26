@@ -30,12 +30,17 @@ fn main() -> Result<()> {
     let mut tasks = load_tasks(&db_path_str).unwrap_or_default();
 
     match cli.command {
-        Commands::Add { text, priority } => {
+        Commands::Add {
+            text,
+            due,
+            priority,
+        } => {
             let next_id = next_id(&tasks);
             let task = Task {
                 id: next_id,
                 text,
                 done: false,
+                due,
                 priority,
             };
             tasks.push(task);

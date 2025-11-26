@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 
@@ -6,6 +7,9 @@ pub struct Task {
     pub id: usize,
     pub text: String,
     pub done: bool,
+    #[serde(default)]
+    pub due: Option<NaiveDate>,
+    #[serde(default)]
     pub priority: Priority,
 }
 

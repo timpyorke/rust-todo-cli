@@ -6,8 +6,8 @@ use std::path::Path;
 use anyhow::{Context, Result};
 
 use crate::constants::*;
-use crate::models::task::Task;
 use crate::models::task::Priority;
+use crate::models::task::Task;
 
 pub fn load_tasks(path: &str) -> Result<Vec<Task>> {
     if !Path::new(path).exists() {
@@ -62,12 +62,17 @@ pub fn print_tasks(tasks: &[Task]) {
             Priority::Low => "LOW".cyan(),
         };
 
+        let due_label = t
+            .due
+            .map(|d| format!(" due {}", d.format("%Y-%m-%d")))
+            .unwrap_or_default();
+
         println!(
             "{} {} [{}] {}",
             format!("{:>3}.", t.id).cyan(),
             status,
             prio_label,
-            t.text
+            format!("{}{}", t.text, due_label)
         );
     }
 

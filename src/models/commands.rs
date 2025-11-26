@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use clap::Subcommand;
 
 use crate::models::task::Priority;
@@ -8,6 +9,10 @@ pub enum Commands {
     Add {
         /// The task description
         text: String,
+
+        /// Due date in YYYY-MM-DD format
+        #[arg(long, value_parser = parse_due_date)]
+        due: Option<NaiveDate>,
 
         /// Task priority (low, normal, high)
         #[arg(long, value_enum, default_value_t = Priority::Normal)]
@@ -52,4 +57,9 @@ pub enum Commands {
 
     /// Remove all tasks
     Clear,
+}
+
+fn parse_due_date(s: &str) -> Result<NaiveDate, String> {
+    NaiveDate::parse_from_str(s, "%Y-%m-%d")
+        .map_err(|_| "Use YYYY-MM-DD, e.g. 2025-02-01".to_string())
 }
