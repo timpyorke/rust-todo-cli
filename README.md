@@ -75,6 +75,14 @@ todo clear
 
 Your tasks are stored in `~/.todo-cli/todo.json`.
 
+## Development
+
+### Running Tests
+Run the unit tests with:
+```bash
+cargo test
+```
+
 ## Dependencies
 
 - [clap](https://crates.io/crates/clap) - Command line argument parsing
@@ -82,3 +90,4 @@ Your tasks are stored in `~/.todo-cli/todo.json`.
 - [colored](https://crates.io/crates/colored) - Terminal colors
 - [dirs](https://crates.io/crates/dirs) - Platform-agnostic home directory discovery
 - [anyhow](https://crates.io/crates/anyhow) - Error handling
+- [tempfile](https://crates.io/crates/tempfile) - Temporary file creation (Dev dependency)
