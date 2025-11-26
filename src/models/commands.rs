@@ -1,5 +1,5 @@
 use chrono::NaiveDate;
-use clap::Subcommand;
+use clap::{Subcommand, ValueEnum};
 
 use crate::models::task::Priority;
 
@@ -32,6 +32,10 @@ pub enum Commands {
         /// Search text (case-insensitive)
         #[arg(long)]
         search: Option<String>,
+
+        /// Sort tasks by id or due date
+        #[arg(long, value_enum, default_value_t = SortBy::Id)]
+        sort: SortBy,
     },
 
     /// Mark a task as done (by id)
@@ -57,6 +61,12 @@ pub enum Commands {
 
     /// Remove all tasks
     Clear,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum SortBy {
+    Id,
+    Date,
 }
 
 fn parse_due_date(s: &str) -> Result<NaiveDate, String> {

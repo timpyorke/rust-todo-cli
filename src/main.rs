@@ -6,7 +6,9 @@ use std::fs;
 use std::path::PathBuf;
 
 use todo::constants::*;
-use todo::models::{cli::Cli, commands::Commands, task::Task};
+use std::cmp::Ordering;
+
+use todo::models::{cli::Cli, commands::{Commands, SortBy}, task::Task};
 use todo::storage::{load_tasks, matches_search, next_id, print_tasks, save_tasks};
 
 fn db_file_path() -> Result<PathBuf> {
@@ -55,6 +57,7 @@ fn main() -> Result<()> {
             done,
             pending,
             search,
+            sort,
         } => {
             // Start with full list
             let mut filtered: Vec<&Task> = tasks.iter().collect();
@@ -81,7 +84,19 @@ fn main() -> Result<()> {
             }
 
             // Convert &Task → Task so we can reuse print_tasks()
-            let owned: Vec<Task> = filtered.into_iter().cloned().collect();
+            let mut owned: Vec<Task> = filtered.into_iter().cloned().collect();
+
+            // Sort
+            match sort {
+                SortBy::Id => owned.sort_by_key(|t| t.id),
+                SortBy::Date => owned.sort_by(|a, b| match (a.due, b.due) {
+                    (Some(ad), Some(bd)) => ad.cmp(&bd).then(a.id.cmp(&b.id)),
+                    (Some(_), None) => Ordering::Less,   // dated tasks first
+                    (None, Some(_)) => Ordering::Greater,
+                    (None, None) => a.id.cmp(&b.id),
+                }),
+            }
+
             print_tasks(&owned);
         }
 
