@@ -62,3 +62,7 @@ pub fn print_tasks(tasks: &[Task]) {
         format!("{} {pending_count}", LABEL_PENDING).yellow()
     );
 }
+
+
+#[cfg(test)]
+mod tests;
