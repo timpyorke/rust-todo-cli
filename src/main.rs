@@ -5,9 +5,9 @@ use dirs::home_dir;
 use std::fs;
 use std::path::PathBuf;
 
-use todo::models::{cli::Cli, commands::Commands, task::Task};
-use todo::storage::{load_tasks, next_id, print_tasks, save_tasks};
 use todo::constants::*;
+use todo::models::{cli::Cli, commands::Commands, task::Task};
+use todo::storage::{load_tasks, matches_search, next_id, print_tasks, save_tasks};
 
 fn db_file_path() -> Result<PathBuf> {
     let home = home_dir().context(ERR_HOME_DIR)?;
@@ -42,28 +42,38 @@ fn main() -> Result<()> {
             println!("{}", format!("Task added (id: {next_id})").green());
         }
 
-        Commands::List { done, pending } => {
-            // Decide filter based on flags
-            let filtered: Vec<&Task> = match (done, pending) {
-                (true, false) => tasks.iter().filter(|t| t.done).collect(),
-                (false, true) => tasks.iter().filter(|t| !t.done).collect(),
-                // both false OR both true -> show all
-                _ => tasks.iter().collect(),
+        Commands::List {
+            done,
+            pending,
+            search,
+        } => {
+            // Start with full list
+            let mut filtered: Vec<&Task> = tasks.iter().collect();
+
+            // Filter: done / pending
+            filtered = match (done, pending) {
+                (true, false) => filtered.into_iter().filter(|t| t.done).collect(),
+                (false, true) => filtered.into_iter().filter(|t| !t.done).collect(),
+                _ => filtered, // both false or both true → no done/pending filter
             };
 
-            if filtered.is_empty() {
-                if done {
-                    println!("{}", MSG_NO_DONE_TASKS.green());
-                } else if pending {
-                    println!("{}", MSG_NO_PENDING_TASKS.green());
-                } else {
-                    println!("{}", MSG_NO_TASKS.green());
-                }
-            } else {
-                // Map &Task → Task for print_tasks which expects &[Task]
-                let owned: Vec<Task> = filtered.into_iter().cloned().collect();
-                print_tasks(&owned);
+            // Filter: search keyword
+            if let Some(keyword) = search {
+                filtered = filtered
+                    .into_iter()
+                    .filter(|t| matches_search(t, &keyword))
+                    .collect();
             }
+
+            // Handle empty results
+            if filtered.is_empty() {
+                println!("{}", "No tasks match your filters. 🔍".yellow());
+                return Ok(());
+            }
+
+            // Convert &Task → Task so we can reuse print_tasks()
+            let owned: Vec<Task> = filtered.into_iter().cloned().collect();
+            print_tasks(&owned);
         }
 
         Commands::Done { id } => {
@@ -79,6 +89,25 @@ fn main() -> Result<()> {
             if found {
                 save_tasks(&db_path_str, &tasks)?;
                 println!("{}", format!("Marked task {id} as done ✅").green());
+            } else {
+                eprintln!("{}", format!("Task with id {id} not found.").red());
+            }
+        }
+
+        Commands::Edit { id, text } => {
+            let mut found = false;
+
+            for t in &mut tasks {
+                if t.id == id {
+                    t.text = text.clone();
+                    found = true;
+                    break;
+                }
+            }
+
+            if found {
+                save_tasks(&db_path_str, &tasks)?;
+                println!("{}", format!("Updated task {id} ✏️").green());
             } else {
                 eprintln!("{}", format!("Task with id {id} not found.").red());
             }

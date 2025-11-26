@@ -19,6 +19,11 @@ pub fn load_tasks(path: &str) -> Result<Vec<Task>> {
     Ok(tasks)
 }
 
+pub fn matches_search(task: &Task, keyword: &str) -> bool {
+    let keyword = keyword.to_lowercase();
+    task.text.to_lowercase().contains(&keyword)
+}
+
 pub fn save_tasks(path: &str, tasks: &[Task]) -> Result<()> {
     let file = OpenOptions::new()
         .write(true)

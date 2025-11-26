@@ -17,12 +17,25 @@ pub enum Commands {
         /// Show only pending tasks
         #[arg(long)]
         pending: bool,
+
+        /// Search text (case-insensitive)
+        #[arg(long)]
+        search: Option<String>,
     },
 
     /// Mark a task as done (by id)
     Done {
         /// Task id
         id: usize,
+    },
+
+    /// Edit an existing task's text
+    Edit {
+        /// Task id
+        id: usize,
+
+        /// New task text
+        text: String,
     },
 
     /// Remove a task (by id)
