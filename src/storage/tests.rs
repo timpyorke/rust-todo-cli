@@ -1,4 +1,5 @@
 use super::*;
+use chrono::NaiveDate;
 use tempfile::NamedTempFile;
 
 #[test]
@@ -29,6 +30,30 @@ fn test_save_and_load_tasks() -> Result<()> {
     assert_eq!(loaded_tasks.len(), 2);
     assert_eq!(loaded_tasks[0].text, "Task 1");
     assert_eq!(loaded_tasks[1].done, true);
+
+    Ok(())
+}
+
+#[test]
+fn test_save_and_load_tasks_with_due_and_tags() -> Result<()> {
+    let file = NamedTempFile::new()?;
+    let path = file.path().to_str().unwrap();
+
+    let tasks = vec![Task {
+        id: 1,
+        text: "Tagged task".to_string(),
+        done: false,
+        due: Some(NaiveDate::from_ymd_opt(2025, 2, 1).unwrap()),
+        priority: Priority::High,
+        tags: vec!["home".into(), "urgent".into()],
+    }];
+
+    save_tasks(path, &tasks)?;
+
+    let loaded = load_tasks(path)?;
+    assert_eq!(loaded.len(), 1);
+    assert_eq!(loaded[0].due, tasks[0].due);
+    assert_eq!(loaded[0].tags, tasks[0].tags);
 
     Ok(())
 }

@@ -4,13 +4,11 @@ A simple, colorful command-line todo list manager written in Rust.
 
 ## Features
 
-- **Add tasks**: Quickly add new tasks to your list.
-- **List tasks**: View all tasks, or filter by pending/done status.
-- **Mark as done**: Mark tasks as completed.
-- **Remove tasks**: Delete specific tasks.
-- **Clear all**: Remove all tasks from the list.
-- **Persistent storage**: Tasks are saved to a JSON file in your home directory (`~/.todo-cli/todo.json`).
-- **Colored output**: Visual feedback for actions and status.
+- **Add tasks** with priority, due date, and tags
+- **List tasks** with filters: pending/done, search, tags (must match all), and sorting by id or due date
+- **Mark as done**, **edit**, **remove**, or **clear**
+- **Persistent storage** in your home directory (`~/.todo-cli/todo.json`)
+- **Colored output** for quick scanning
 
 ## Installation
 
@@ -36,24 +34,38 @@ Ensure you have [Rust and Cargo installed](https://www.rust-lang.org/tools/insta
 
 ### Add a Task
 ```bash
+# Basic
 todo add "Buy groceries"
+
+# With priority, due date (YYYY-MM-DD), and tags (comma-separated)
+todo add "Pay bills" --priority high --due 2025-02-01 --tags home,finance
 ```
 
 ### List Tasks
-Show all tasks:
-```bash
-todo list
-```
-
-Show only pending tasks:
-```bash
-todo list --pending
-```
-
-Show only completed tasks:
-```bash
-todo list --done
-```
+- All tasks:
+  ```bash
+  todo list
+  ```
+- Only pending:
+  ```bash
+  todo list --pending
+  ```
+- Only done:
+  ```bash
+  todo list --done
+  ```
+- Search by text:
+  ```bash
+  todo list --search groceries
+  ```
+- Filter by tags (task must include all):
+  ```bash
+  todo list --tags home,finance
+  ```
+- Sort (default is id):
+  ```bash
+  todo list --sort date
+  ```
 
 ### Mark a Task as Done
 Provide the ID of the task (seen in `list` output):
@@ -89,5 +101,6 @@ cargo test
 - [serde](https://crates.io/crates/serde) & [serde_json](https://crates.io/crates/serde_json) - Serialization
 - [colored](https://crates.io/crates/colored) - Terminal colors
 - [dirs](https://crates.io/crates/dirs) - Platform-agnostic home directory discovery
+- [chrono](https://crates.io/crates/chrono) - Dates for due handling
 - [anyhow](https://crates.io/crates/anyhow) - Error handling
 - [tempfile](https://crates.io/crates/tempfile) - Temporary file creation (Dev dependency)
