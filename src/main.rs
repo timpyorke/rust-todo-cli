@@ -7,19 +7,21 @@ use std::path::PathBuf;
 
 mod models;
 mod storage;
+mod constants;
 
 use models::{cli::Cli, commands::Commands, task::Task};
 use storage::{load_tasks, next_id, print_tasks, save_tasks};
+use constants::*;
 
 fn db_file_path() -> Result<PathBuf> {
-    let home = home_dir().context("Could not find home directory")?;
-    let dir = home.join(".todo-cli");
+    let home = home_dir().context(ERR_HOME_DIR)?;
+    let dir = home.join(DIR_NAME);
 
     if !dir.exists() {
-        fs::create_dir_all(&dir).context("Could not create .todo-cli directory")?;
+        fs::create_dir_all(&dir).context(ERR_CREATE_DIR)?;
     }
 
-    Ok(dir.join("todo.json"))
+    Ok(dir.join(DB_FILE_NAME))
 }
 
 fn main() -> Result<()> {
@@ -55,11 +57,11 @@ fn main() -> Result<()> {
 
             if filtered.is_empty() {
                 if done {
-                    println!("{}", "No done tasks yet. ✅".green());
+                    println!("{}", MSG_NO_DONE_TASKS.green());
                 } else if pending {
-                    println!("{}", "No pending tasks. All caught up! 🎉".green());
+                    println!("{}", MSG_NO_PENDING_TASKS.green());
                 } else {
-                    println!("{}", "No tasks yet. 🎉".green());
+                    println!("{}", MSG_NO_TASKS.green());
                 }
             } else {
                 // Map &Task → Task for print_tasks which expects &[Task]
@@ -101,7 +103,7 @@ fn main() -> Result<()> {
         Commands::Clear => {
             tasks.clear();
             save_tasks(&db_path_str, &tasks)?;
-            println!("{}", "All tasks cleared.".yellow());
+            println!("{}", MSG_ALL_CLEARED.yellow());
         }
     }
 
