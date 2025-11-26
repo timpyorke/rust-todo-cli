@@ -1,11 +1,17 @@
 use clap::Subcommand;
 
+use crate::models::task::Priority;
+
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     /// Add a new task
     Add {
         /// The task description
         text: String,
+
+        /// Task priority (low, normal, high)
+        #[arg(long, value_enum, default_value_t = Priority::Normal)]
+        priority: Priority,
     },
 
     /// List tasks (optionally filtered)

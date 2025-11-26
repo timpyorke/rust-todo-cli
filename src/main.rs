@@ -30,16 +30,20 @@ fn main() -> Result<()> {
     let mut tasks = load_tasks(&db_path_str).unwrap_or_default();
 
     match cli.command {
-        Commands::Add { text } => {
+        Commands::Add { text, priority } => {
             let next_id = next_id(&tasks);
             let task = Task {
                 id: next_id,
                 text,
                 done: false,
+                priority,
             };
             tasks.push(task);
             save_tasks(&db_path_str, &tasks)?;
-            println!("{}", format!("Task added (id: {next_id})").green());
+            println!(
+                "{}",
+                format!("Task added (id: {next_id}, priority: {:?})", priority).green()
+            );
         }
 
         Commands::List {

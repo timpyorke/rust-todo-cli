@@ -5,8 +5,9 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 
-use crate::models::task::Task;
 use crate::constants::*;
+use crate::models::task::Task;
+use crate::models::task::Priority;
 
 pub fn load_tasks(path: &str) -> Result<Vec<Task>> {
     if !Path::new(path).exists() {
@@ -43,31 +44,41 @@ pub fn next_id(tasks: &[Task]) -> usize {
 
 pub fn print_tasks(tasks: &[Task]) {
     if tasks.is_empty() {
-        println!("{}", MSG_NO_TASKS_SHOW.green());
+        println!("{}", "No tasks to show. 🎉".green());
         return;
     }
 
-    println!("{}", MSG_YOUR_TASKS.bold());
+    println!("{}", "Your tasks:".bold());
     for t in tasks {
         let status = if t.done {
-            STATUS_DONE.green()
+            "[x]".green()
         } else {
-            STATUS_PENDING.yellow()
+            "[ ]".yellow()
         };
 
-        println!("{} {} {}", format!("{:>3}.", t.id).cyan(), status, t.text);
+        let prio_label = match t.priority {
+            Priority::High => "HIGH".red().bold(),
+            Priority::Normal => "NORM".white(),
+            Priority::Low => "LOW".cyan(),
+        };
+
+        println!(
+            "{} {} [{}] {}",
+            format!("{:>3}.", t.id).cyan(),
+            status,
+            prio_label,
+            t.text
+        );
     }
 
-    // Summary line
     let done_count = tasks.iter().filter(|t| t.done).count();
     let pending_count = tasks.len() - done_count;
     println!(
         "\n{}  {}",
-        format!("{} {done_count}", LABEL_DONE).green(),
-        format!("{} {pending_count}", LABEL_PENDING).yellow()
+        format!("Done: {done_count}").green(),
+        format!("Pending: {pending_count}").yellow()
     );
 }
-
 
 #[cfg(test)]
 mod tests;
