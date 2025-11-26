@@ -66,13 +66,18 @@ pub fn print_tasks(tasks: &[Task]) {
             .due
             .map(|d| format!(" due {}", d.format("%Y-%m-%d")))
             .unwrap_or_default();
+        let tags_label = if t.tags.is_empty() {
+            String::new()
+        } else {
+            format!(" [{}]", t.tags.join(","))
+        };
 
         println!(
             "{} {} [{}] {}",
             format!("{:>3}.", t.id).cyan(),
             status,
             prio_label,
-            format!("{}{}", t.text, due_label)
+            format!("{}{}{}", t.text, due_label, tags_label)
         );
     }
 

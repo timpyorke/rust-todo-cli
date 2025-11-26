@@ -11,6 +11,8 @@ pub struct Task {
     pub due: Option<NaiveDate>,
     #[serde(default)]
     pub priority: Priority,
+    #[serde(default)]
+    pub tags: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, ValueEnum, Default)]

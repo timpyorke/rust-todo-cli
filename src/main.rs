@@ -35,6 +35,7 @@ fn main() -> Result<()> {
         Commands::Add {
             text,
             due,
+            tags,
             priority,
         } => {
             let next_id = next_id(&tasks);
@@ -43,6 +44,7 @@ fn main() -> Result<()> {
                 text,
                 done: false,
                 due,
+                tags,
                 priority,
             };
             tasks.push(task);
@@ -58,6 +60,7 @@ fn main() -> Result<()> {
             pending,
             search,
             sort,
+            tags,
         } => {
             // Start with full list
             let mut filtered: Vec<&Task> = tasks.iter().collect();
@@ -74,6 +77,20 @@ fn main() -> Result<()> {
                 filtered = filtered
                     .into_iter()
                     .filter(|t| matches_search(t, &keyword))
+                    .collect();
+            }
+
+            // Filter: tags (task must contain all requested tags)
+            if !tags.is_empty() {
+                filtered = filtered
+                    .into_iter()
+                    .filter(|t| {
+                        tags.iter().all(|tag| {
+                            t.tags
+                                .iter()
+                                .any(|task_tag| task_tag.eq_ignore_ascii_case(tag))
+                        })
+                    })
                     .collect();
             }
 

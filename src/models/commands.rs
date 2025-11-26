@@ -14,6 +14,10 @@ pub enum Commands {
         #[arg(long, value_parser = parse_due_date)]
         due: Option<NaiveDate>,
 
+        /// Comma-separated list of tags
+        #[arg(long, value_delimiter = ',')]
+        tags: Vec<String>,
+
         /// Task priority (low, normal, high)
         #[arg(long, value_enum, default_value_t = Priority::Normal)]
         priority: Priority,
@@ -36,6 +40,10 @@ pub enum Commands {
         /// Sort tasks by id or due date
         #[arg(long, value_enum, default_value_t = SortBy::Id)]
         sort: SortBy,
+
+        /// Filter by tags (comma-separated). Task must include all provided tags.
+        #[arg(long, value_delimiter = ',')]
+        tags: Vec<String>,
     },
 
     /// Mark a task as done (by id)

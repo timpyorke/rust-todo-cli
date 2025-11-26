@@ -7,8 +7,8 @@ fn test_next_id() {
     assert_eq!(next_id(&tasks), 1);
 
     let tasks = vec![
-        Task { id: 1, text: "a".to_string(), done: false, due: None, priority: Priority::Normal },
-        Task { id: 3, text: "b".to_string(), done: true, due: None, priority: Priority::Normal },
+        Task { id: 1, text: "a".to_string(), done: false, due: None, priority: Priority::Normal, tags: vec![] },
+        Task { id: 3, text: "b".to_string(), done: true, due: None, priority: Priority::Normal, tags: vec![] },
     ];
     assert_eq!(next_id(&tasks), 4);
 }
@@ -19,8 +19,8 @@ fn test_save_and_load_tasks() -> Result<()> {
     let path = file.path().to_str().unwrap();
 
     let tasks = vec![
-        Task { id: 1, text: "Task 1".to_string(), done: false, due: None, priority: Priority::Normal },
-        Task { id: 2, text: "Task 2".to_string(), done: true, due: None, priority: Priority::Normal },
+        Task { id: 1, text: "Task 1".to_string(), done: false, due: None, priority: Priority::Normal, tags: vec![] },
+        Task { id: 2, text: "Task 2".to_string(), done: true, due: None, priority: Priority::Normal, tags: vec![] },
     ];
 
     save_tasks(path, &tasks)?;
