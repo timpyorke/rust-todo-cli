@@ -14,21 +14,22 @@ A simple, colorful command-line todo list manager written in Rust.
 
 Ensure you have [Rust and Cargo installed](https://www.rust-lang.org/tools/install).
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd rust-todo-cli
-   ```
+**Option A: Install from Git tag (recommended)**
+```bash
+cargo install --git https://github.com/timpyorke/rust-todo-cli --tag v1.0.0
+```
 
-2. Build and install:
-   ```bash
-   cargo install --path .
-   ```
+**Option B: Download a GitHub Release binary**
+- Grab the archive from the Releases page, extract, and put `todo` on your `PATH`.
 
-   Or run directly with `cargo run`:
-   ```bash
-   cargo run -- --help
-   ```
+**Option C: Local build (for development)**
+```bash
+git clone https://github.com/timpyorke/rust-todo-cli
+cd rust-todo-cli
+cargo install --path .
+# or run without installing:
+cargo run -- --help
+```
 
 ## Usage
 
