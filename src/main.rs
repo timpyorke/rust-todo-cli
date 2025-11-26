@@ -5,13 +5,9 @@ use dirs::home_dir;
 use std::fs;
 use std::path::PathBuf;
 
-mod models;
-mod storage;
-mod constants;
-
-use models::{cli::Cli, commands::Commands, task::Task};
-use storage::{load_tasks, next_id, print_tasks, save_tasks};
-use constants::*;
+use todo::models::{cli::Cli, commands::Commands, task::Task};
+use todo::storage::{load_tasks, next_id, print_tasks, save_tasks};
+use todo::constants::*;
 
 fn db_file_path() -> Result<PathBuf> {
     let home = home_dir().context(ERR_HOME_DIR)?;
